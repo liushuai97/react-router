@@ -1,68 +1,117 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+React Router介绍
 
-## Available Scripts
+v5 v2 v3 v4
+v4/v5  用法和理念基本一致
+v2/v3 差异较大
 
-In the project directory, you can run:
+版本差异
 
-### `yarn start`
+v4和v4之前版本比较  
+ v4: 大多数项目使用的稳定版本，v4属于动态路由
+     react-router | 路由基础库
+     react-router-dom | 适用于浏览器环境的再次封装
+     react-router-native | 适用于react-native环境的再次封装
+     react-router-config | 静态路由配置
+ v4之前版本：静态路由
+ v5 vs V4: 
+    完全兼容v4
+    支持React16版本的新特性
+    兼容react之前的一些版本
+    消除了严格模式的警告
+    使用create-react-context 实现 context api
+    v4.4 ^ react-router: "^4.3.1" 导致报错 跳过至 v5
+    稳定性、兼容性、一系列的改进与新特性
+    >=15 React版本的完全兼容，react16提供了一个更好的支持
+    升级了react context api，消除了所有严格模式的警告
+    对发布的所有绑定包，进行了严格测试
+    引入了预优化  build process.env.NODE_ENV
+    import Router from 'react-router/Reouter' -> import {Router, Switch} from 'react-router'
+    简化了一些发布过程
+  
+新特性：
+能够在 支持数组
+<Router path={['user/:id', 'info/>:id']} component={User}>
+BUG的修复
+<Link innerRef> <Route component> 使用React.forwardRef
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+目前的React Router版本中，已经不需要路由配置，现在一切皆组件
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+前端路由
 
-### `yarn test`
+原理：检测浏览器URL的变化，截获URL地址，然后进行URL路由匹配
+hash: 锚点 hashchange  - #
+hash刷新页面不会发送请求
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+html5: history - pushState() | replaceState() | onpopstate 事件
+注意点：页面刷新时，浏览器会向服务器发送请求
 
-### `yarn build`
+安装
+react web router -> router-router-dom
+react native router -> router-router-native
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+第一个基础路由配置
+组件：HashRouter/BrowserRouter Route
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+React Router常见概念
 
-### `yarn eject`
+Router组件：每个Router 都会创建一个history对象，用来保持当前位置的追踪，
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+web项目
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+提供了两种路由 HashRouter（只处理静态的URL）/BrowserRouter（非静态占站点，要处理不同的URL）
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+react native项目
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+MemoryHistory组件
 
-## Learn More
+Route组件：
+只是一个具有渲染方法的普通React组件，路由匹配成功就会渲染该组件
+常用属性：
+    path：'' 路由匹配规则，可以省略，字符串类型
+    exact：boolean true  定义严格模式/非严格模式
+    component：要渲染的组件
+    render：渲染函数形式 逻辑操作   - path路径匹配url时执行
+    children：渲染函数形式 逻辑操作  - 在任何时候都会执行，match{} null
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+优先级 children > component > render
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Switch组件
+最多只能匹配一个组件
+作用，可以将Route组件分组
 
-### Code Splitting
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+Link与NavLink组件
 
-### Analyzing the Bundle Size
+Link声明式可访问导航，属性：
+1、to: string类型 {pathname, search, hash, state}
+2、replace： boolean true，替换当前历史记录
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+NavLink特殊版本的Link，当于当前URL匹配时可以添加样式
+activeClassName activeStyle
+exact
 
-### Making a Progressive Web App
+Redirect组件
+重定向组件 to是必须的
+to: 字符串类型，对象类型
+push: boolean true 会将新地址推送到history history.push
+from: 将要进入的URL
+exact: boolean true 严格模式匹配
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+History对象
+每个Router都会创建一个History对象，用来保持当前位置的追踪
+编程式导航 - push方法
 
-### Advanced Configuration
+withRouter 组件
+是否经过路由匹配
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+动态路由
 
-### Deployment
+路由规则不是预先确定的，在渲染过程中确定的
+info/1 infp/2
+:id
+props.match.params.id
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+嵌套路由
+二级路由
+子组件中再进行路由配置即可
